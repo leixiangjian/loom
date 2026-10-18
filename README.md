@@ -15,7 +15,7 @@
 [![No Backend](https://img.shields.io/badge/Backend-None-22c55e?style=flat-square)](.)
 [![License](https://img.shields.io/badge/License-MIT-f59e0b?style=flat-square)](./LICENSE)
 
-[English](./README.en.md) · **简体中文** · [在线演示](https://your-demo-url.example.com) · [问题反馈](https://github.com/your-org/loom/issues)
+[English](./README.en.md) · **简体中文** · [在线演示](https://leixiangjian.github.io/loom/) · [问题反馈](https://github.com/your-org/loom/issues)
 
 </div>
 
@@ -413,3 +413,130 @@ API Key：sk-ant-...
 └─────────────────────────────────────────┘
 
 ```
+
+关键技术决策
+
+决策	理由
+单 HTML 文件	零构建、零部署，用户拿到就能用
+全前端	无中间服务器，数据不出本地，无遥测
+sandbox iframe	生成的 HTML 是不可信内容，必须隔离
+原生 ZIP 解析	避免引入 JSZip 等外部依赖，保持单文件
+pdf.js 按需加载	PDF 是低频功能，不值得为它打包整个库
+防御式解析	不同模型/版本的响应结构差异大，必须多层兜底
+流式渲染	用户等待时间感知更短，体验更好
+
+System Prompt 设计
+
+Loom 的 System Prompt 由三部分拼接：
+
+基础规范（BASE_SYSTEM）：输出格式、自包含约束、质量基线
+
+设备约束（DEVICE_PRESETS）：目标视口、布局、字号、圆角
+
+Skills（用户勾选）：每个 Skill 一段约束
+
+三者叠加后再发给模型，保证输出既符合通用规范，又针对目标设备优化。
+
+免费模型识别
+OpenCode 的免费模型识别采用自适应策略：
+
+成本驱动：如果 provider 暴露了定价信息，cost.input === 0 && cost.output === 0 即为免费
+
+名称驱动：如果 provider 不暴露定价（如 OpenCode Zen），则根据模型名是否含 free 判断
+
+Loom 两条规则都实现了，并优先尝试成本驱动，失败时降级到名称驱动。
+
+数据与隐私
+
+
+API Key：仅保存在浏览器 localStorage，不发送到任何第三方服务器
+
+需求内容：仅发送到你配置的模型服务商
+
+生成的 HTML：不上传、不留存，只在本地内存和 iframe.srcdoc 中存在
+
+无遥测：Loom 不含任何统计脚本
+
+无 Cookie：不使用 Cookie 或任何跨站追踪技术
+
+如果你在企业环境使用，建议：
+
+使用本地 OpenCode 直连，数据完全不出内网
+
+定期清理浏览器 localStorage 中的 API Key
+
+不要在公共电脑上保存 API Key
+
+常见问题
+<details> <summary><b>Q：连接 OpenCode 提示 "Failed to fetch"？</b></summary>
+CORS 未配置。确认启动命令带了 --cors，且 origin 与浏览器地址栏中的地址一致。
+
+路线图
+已完成
+☑ 多格式需求导入（MD / Word / PDF / TXT）
+☑ 三种目标设备（手机 / 网站 / 平板）
+☑ 多模型接入（OpenCode 直连 + 8 家云端 + 自定义）
+☑ OpenCode 免费模型浏览
+☑ 流式生成 + 实时预览
+☑ 生成轨迹日志
+☑ 迭代对话
+☑ 全屏预览
+☑ HTML / Word / PDF 导出
+☑ 配置中心集中管理
+规划中
+□ 多页面流程串联（如登录 → 首页 → 详情）
+□ 生成历史版本管理（可回滚、可对比）
+□ 团队共享链接（生成只读分享链接）
+□ 设计系统 token 导入（DESIGN.md）
+□ 原型批注与评审模式
+□ React / Vue 组件代码导出
+□ Figma 插件（把生成结果导入 Figma）
+□ 多语言界面（English / 日本語 / 한국어）
+长期愿景
+从原型到生产：生成的 HTML 可直接演化为生产代码
+
+设计系统集成：读取企业自己的 DESIGN.md，生成符合品牌规范的原型
+
+协作闭环：产品 → 设计 → 前端在同一个工具里完成从需求到原型的传递
+
+贡献
+欢迎提交 Issue 和 PR。
+
+提交 Issue
+请附上：
+
+服务商类型（OpenCode / Anthropic / OpenAI / ...）
+
+模型名
+
+完整错误信息
+
+生成轨迹截图（如果与生成相关）
+
+提交 PR
+保持单文件原则，不引入构建步骤和运行时依赖
+
+新增服务商只需在 PROVIDERS 对象中增加一条记录
+
+新增 Skill 只需在 SKILLS 对象中增加一条记录
+
+修改 System Prompt 时请说明理由并附上生成效果对比
+
+
+致谢
+Loom 的设计参考了以下项目和产品的思路：
+
+Google Stitch：命名灵感来源，验证了「自然语言 → 可交互原型」的产品形态
+
+v0：React 代码生成的产品范式
+
+OpenCode：本地模型服务与免费模型池
+
+pdf.js：PDF 解析
+
+Open Design：Skill 文件化与多 provider 架构的参考
+
+感谢所有为开源社区贡献工具的开发者。
+
+许可证
+Apache2.0 © Loom Contributors

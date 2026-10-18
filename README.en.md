@@ -15,7 +15,7 @@
 [![No Backend](https://img.shields.io/badge/Backend-None-22c55e?style=flat-square)](.)
 [![License](https://img.shields.io/badge/License-MIT-f59e0b?style=flat-square)](./LICENSE)
 
-**English** · [简体中文](./README.md) · [Live Demo](https://your-demo-url.example.com) · [Issues](https://github.com/your-org/loom/issues)
+**English** · [简体中文](./README.md) · [Live Demo](https://leixiangjian.github.io/loom/) · [Issues](https://github.com/your-org/loom/issues)
 
 </div>
 
